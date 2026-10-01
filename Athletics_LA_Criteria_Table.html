@@ -1,0 +1,1855 @@
+
+<!DOCTYPE html>
+
+<html lang="nl">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+>
+
+<title>
+Athletics LA Criteria
+</title>
+
+
+<style>
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 30px;
+    color: #222;
+    background-color: white;
+}
+
+
+h1 {
+    font-size: 22px;
+    margin-bottom: 6px;
+}
+
+
+.subtitle {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 18px;
+}
+
+
+/* ==========================================================
+   FILTERS
+========================================================== */
+
+.filter-panel {
+
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 14px;
+
+    align-items: flex-end;
+
+    margin-bottom: 14px;
+
+    padding: 14px;
+
+    background-color: #f7f7f7;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 6px;
+}
+
+
+.filter-group {
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+
+.filter-group label {
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: #444;
+}
+
+
+.filter-group select {
+
+    min-width: 170px;
+
+    padding: 6px 8px;
+
+    font-size: 12px;
+
+    border: 1px solid #cccccc;
+
+    border-radius: 4px;
+
+    background-color: white;
+}
+
+
+button {
+
+    padding: 7px 12px;
+
+    font-size: 12px;
+
+    border: 1px solid #bbbbbb;
+
+    border-radius: 4px;
+
+    background-color: white;
+
+    cursor: pointer;
+}
+
+
+button:hover {
+
+    background-color: #eeeeee;
+}
+
+
+.result-count {
+
+    font-size: 11px;
+
+    color: #666;
+
+    margin-bottom: 8px;
+}
+
+
+/* ==========================================================
+   TABEL
+========================================================== */
+
+.table-container {
+
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+
+.criteria-table {
+
+    border-collapse: collapse;
+
+    width: 100%;
+
+    min-width: 1200px;
+
+    font-size: 12px;
+}
+
+
+.criteria-table th {
+
+    background-color: #f2f2f2;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    padding: 9px 18px 9px 7px;
+
+    border-bottom: 2px solid #bdbdbd;
+
+    white-space: nowrap;
+
+    position: sticky;
+
+    top: 0;
+
+    cursor: pointer;
+
+    user-select: none;
+}
+
+
+.criteria-table th:hover {
+
+    background-color: #e2e2e2;
+}
+
+
+.criteria-table th::after {
+
+    content: " ↕";
+
+    color: #aaaaaa;
+
+    font-size: 10px;
+}
+
+
+.criteria-table th.sort-asc::after {
+
+    content: " ▲";
+
+    color: #333333;
+}
+
+
+.criteria-table th.sort-desc::after {
+
+    content: " ▼";
+
+    color: #333333;
+}
+
+
+.criteria-table td {
+
+    padding: 7px;
+
+    border-bottom: 1px solid #dddddd;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+.criteria-table td:nth-child(1),
+.criteria-table td:nth-child(2) {
+
+    text-align: left;
+}
+
+
+.criteria-table tbody tr:nth-child(even) {
+
+    background-color: #fafafa;
+}
+
+
+.criteria-table tbody tr:hover {
+
+    background-color: #eeeeee;
+}
+
+
+/* ==========================================================
+   UITLEG
+========================================================== */
+
+.note {
+
+    margin-top: 18px;
+
+    font-size: 11px;
+
+    color: #666;
+
+    line-height: 1.6;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<h1>
+Athletics LA Criteria
+</h1>
+
+
+<div class="subtitle">
+Analyse op basis van observaties met N_events &gt; 1
+</div>
+
+
+<!-- ========================================================
+     FILTERS
+========================================================= -->
+
+<div class="filter-panel">
+
+
+    <div class="filter-group">
+
+        <label>
+            Gender
+        </label>
+
+        <select id="filterGender">
+
+            <option value="">
+                Alle
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+        <label>
+            Discipline
+        </label>
+
+        <select id="filterDiscipline">
+
+            <option value="">
+                Alle
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+        <label>
+            Verschil WC2027
+        </label>
+
+        <select id="filterWcDifference">
+
+            <option value="">
+                Alle
+            </option>
+
+            <option value="negative">
+                Voorstel LA strenger
+            </option>
+
+            <option value="positive">
+                Voorstel LA soepeler
+            </option>
+
+            <option value="zero">
+                Gelijk
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <button
+        id="resetFilters"
+        type="button"
+    >
+        Filters wissen
+    </button>
+
+
+</div>
+
+
+<div
+    id="resultCount"
+    class="result-count"
+>
+</div>
+
+
+<!-- ========================================================
+     TABEL
+========================================================= -->
+
+<div class="table-container">
+
+<table class="dataframe criteria-table" id="criteriaTable">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Gender</th>
+      <th>Discipline</th>
+      <th>94% Top-8 grens</th>
+      <th>Voorstel eis LA</th>
+      <th>Eis OS 2024</th>
+      <th>Verschil Eis 2024 (%)</th>
+      <th>WC2027 standard</th>
+      <th>Verschil WC2027 (sec/m/pts)</th>
+      <th>Verschil WC2027 (%)</th>
+      <th>Top-8 recall</th>
+      <th>FDR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>men</td>
+      <td>10000m</td>
+      <td>27:19.16</td>
+      <td>27:19.16</td>
+      <td>27:25.00</td>
+      <td>-0.4%</td>
+      <td>27:35.66</td>
+      <td>-16.50 sec</td>
+      <td>-1.0%</td>
+      <td>96%</td>
+      <td>47%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>100m</td>
+      <td>10.01</td>
+      <td>10.01</td>
+      <td>10.08</td>
+      <td>-0.7%</td>
+      <td>9,98</td>
+      <td>+0.03 sec</td>
+      <td>+0.3%</td>
+      <td>94%</td>
+      <td>73%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>110m hurdles</td>
+      <td>13.22</td>
+      <td>13.22</td>
+      <td>13.35</td>
+      <td>-1.0%</td>
+      <td>13,28</td>
+      <td>-0.06 sec</td>
+      <td>-0.5%</td>
+      <td>94%</td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>1500m</td>
+      <td>3:32.14</td>
+      <td>3:32.14</td>
+      <td>3:34.75</td>
+      <td>-1.2%</td>
+      <td>3:31.91</td>
+      <td>+0.23 sec</td>
+      <td>+0.1%</td>
+      <td>94%</td>
+      <td>63%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>200m</td>
+      <td>20.06</td>
+      <td>20.06</td>
+      <td>20.35</td>
+      <td>-1.4%</td>
+      <td>20,11</td>
+      <td>-0.05 sec</td>
+      <td>-0.2%</td>
+      <td>97%</td>
+      <td>49%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>3000m steeplechase</td>
+      <td>8:15.08</td>
+      <td>8:15.08</td>
+      <td>8:20.66</td>
+      <td>-1.1%</td>
+      <td>8:15.22</td>
+      <td>-0.14 sec</td>
+      <td>-0.0%</td>
+      <td>94%</td>
+      <td>64%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>400m</td>
+      <td>44.86</td>
+      <td>44.89</td>
+      <td>45.25</td>
+      <td>-0.8%</td>
+      <td>44,65</td>
+      <td>+0.24 sec</td>
+      <td>+0.5%</td>
+      <td>100%</td>
+      <td>68%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>400m hurdles</td>
+      <td>48.45</td>
+      <td>48.45</td>
+      <td>49.19</td>
+      <td>-1.5%</td>
+      <td>48,45</td>
+      <td>+0.00 sec</td>
+      <td>+0.0%</td>
+      <td>94%</td>
+      <td>63%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>5000m</td>
+      <td>13:06.79</td>
+      <td>13:06.79</td>
+      <td>13:10.09</td>
+      <td>-0.4%</td>
+      <td>12:59.32</td>
+      <td>+7.47 sec</td>
+      <td>+1.0%</td>
+      <td>94%</td>
+      <td>73%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>800m</td>
+      <td>1:44.23</td>
+      <td>1:44.23</td>
+      <td>1:44.86</td>
+      <td>-0.6%</td>
+      <td>1:43.87</td>
+      <td>+0.36 sec</td>
+      <td>+0.3%</td>
+      <td>94%</td>
+      <td>68%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>decathlon</td>
+      <td>8303.00</td>
+      <td>8303.00</td>
+      <td>8260</td>
+      <td>-0.5%</td>
+      <td>8321</td>
+      <td>+18 pts</td>
+      <td>+0.2%</td>
+      <td>94%</td>
+      <td>53%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>discus throw</td>
+      <td>66.59</td>
+      <td>66.59</td>
+      <td>65.27</td>
+      <td>-2.0%</td>
+      <td>66,77</td>
+      <td>+0.18 m</td>
+      <td>+0.3%</td>
+      <td>94%</td>
+      <td>63%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>hammer throw</td>
+      <td>78.41</td>
+      <td>78.41</td>
+      <td>76.78</td>
+      <td>-2.1%</td>
+      <td>76,36</td>
+      <td>-2.05 m</td>
+      <td>-2.7%</td>
+      <td>94%</td>
+      <td>25%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>high jump</td>
+      <td>2.29</td>
+      <td>2.29</td>
+      <td>2.28</td>
+      <td>-0.4%</td>
+      <td>2,27</td>
+      <td>-0.02 m</td>
+      <td>-0.9%</td>
+      <td>94%</td>
+      <td>58%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>javelin throw</td>
+      <td>84.35</td>
+      <td>84.22</td>
+      <td>82.78</td>
+      <td>-1.7%</td>
+      <td>82,93</td>
+      <td>-1.29 m</td>
+      <td>-1.6%</td>
+      <td>97%</td>
+      <td>53%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>long jump</td>
+      <td>8.18</td>
+      <td>8.18</td>
+      <td>8.12</td>
+      <td>-0.7%</td>
+      <td>8,19</td>
+      <td>+0.01 m</td>
+      <td>+0.1%</td>
+      <td>94%</td>
+      <td>66%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>marathon</td>
+      <td>2:08:09</td>
+      <td>2:08:24</td>
+      <td>2:08:10</td>
+      <td>+0.2%</td>
+      <td>2:06.25</td>
+      <td>+119.00 sec</td>
+      <td>+1.6%</td>
+      <td>96%</td>
+      <td>53%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>pole vault</td>
+      <td>5.80</td>
+      <td>5.80</td>
+      <td>5.80</td>
+      <td>+0.0%</td>
+      <td>5,74</td>
+      <td>-0.06 m</td>
+      <td>-1.0%</td>
+      <td>94%</td>
+      <td>62%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>shot put</td>
+      <td>21.68</td>
+      <td>21.68</td>
+      <td>21.01</td>
+      <td>-3.2%</td>
+      <td>20,77</td>
+      <td>-0.91 m</td>
+      <td>-4.4%</td>
+      <td>94%</td>
+      <td>42%</td>
+    </tr>
+    <tr>
+      <td>men</td>
+      <td>triple jump</td>
+      <td>17.14</td>
+      <td>17.14</td>
+      <td>16.96</td>
+      <td>-1.1%</td>
+      <td>17,00</td>
+      <td>-0.14 m</td>
+      <td>-0.8%</td>
+      <td>94%</td>
+      <td>58%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>10000m</td>
+      <td>31:13.18</td>
+      <td>31:13.18</td>
+      <td>31:15.00</td>
+      <td>-0.1%</td>
+      <td>31:33.43</td>
+      <td>-20.25 sec</td>
+      <td>-1.1%</td>
+      <td>96%</td>
+      <td>60%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>100m</td>
+      <td>10.94</td>
+      <td>10.94</td>
+      <td>11.11</td>
+      <td>-1.5%</td>
+      <td>11,05</td>
+      <td>-0.11 sec</td>
+      <td>-1.0%</td>
+      <td>94%</td>
+      <td>43%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>100m hurdles</td>
+      <td>12.53</td>
+      <td>12.53</td>
+      <td>12.85</td>
+      <td>-2.5%</td>
+      <td>12,70</td>
+      <td>-0.17 sec</td>
+      <td>-1.3%</td>
+      <td>94%</td>
+      <td>35%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>1500m</td>
+      <td>3:59.80</td>
+      <td>4:00.04</td>
+      <td>4:04.00</td>
+      <td>-1.6%</td>
+      <td>4:00.03</td>
+      <td>+0.01 sec</td>
+      <td>+0.0%</td>
+      <td>100%</td>
+      <td>55%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>200m</td>
+      <td>22.36</td>
+      <td>22.36</td>
+      <td>22.70</td>
+      <td>-1.5%</td>
+      <td>22,58</td>
+      <td>-0.22 sec</td>
+      <td>-1.0%</td>
+      <td>94%</td>
+      <td>38%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>3000m steeplechase</td>
+      <td>9:14.66</td>
+      <td>9:14.66</td>
+      <td>9:26.90</td>
+      <td>-2.2%</td>
+      <td>9:21.88</td>
+      <td>-7.22 sec</td>
+      <td>-1.3%</td>
+      <td>94%</td>
+      <td>43%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>400m</td>
+      <td>50.38</td>
+      <td>50.38</td>
+      <td>51.20</td>
+      <td>-1.6%</td>
+      <td>50,45</td>
+      <td>-0.07 sec</td>
+      <td>-0.1%</td>
+      <td>94%</td>
+      <td>50%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>400m hurdles</td>
+      <td>54.20</td>
+      <td>54.20</td>
+      <td>55.25</td>
+      <td>-1.9%</td>
+      <td>54,70</td>
+      <td>-0.50 sec</td>
+      <td>-0.9%</td>
+      <td>97%</td>
+      <td>39%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>5000m</td>
+      <td>14:45.29</td>
+      <td>14:45.29</td>
+      <td>15:00.00</td>
+      <td>-1.6%</td>
+      <td>14:49.92</td>
+      <td>-4.63 sec</td>
+      <td>-0.5%</td>
+      <td>97%</td>
+      <td>55%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>800m</td>
+      <td>1:58.96</td>
+      <td>1:58.96</td>
+      <td>1:59.84</td>
+      <td>-0.7%</td>
+      <td>1:58.24</td>
+      <td>+0.72 sec</td>
+      <td>+0.6%</td>
+      <td>94%</td>
+      <td>71%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>discus throw</td>
+      <td>64.60</td>
+      <td>64.57</td>
+      <td>62.32</td>
+      <td>-3.6%</td>
+      <td>62,84</td>
+      <td>-1.73 m</td>
+      <td>-2.8%</td>
+      <td>97%</td>
+      <td>48%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>hammer throw</td>
+      <td>73.43</td>
+      <td>73.43</td>
+      <td>71.80</td>
+      <td>-2.3%</td>
+      <td>71,58</td>
+      <td>-1.85 m</td>
+      <td>-2.6%</td>
+      <td>94%</td>
+      <td>48%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>heptathlon</td>
+      <td>6314.00</td>
+      <td>6314.00</td>
+      <td>6250</td>
+      <td>-1.0%</td>
+      <td>6311</td>
+      <td>-3 pts</td>
+      <td>-0.0%</td>
+      <td>96%</td>
+      <td>49%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>high jump</td>
+      <td>1.96</td>
+      <td>1.96</td>
+      <td>1.93</td>
+      <td>-1.6%</td>
+      <td>1,92</td>
+      <td>-0.04 m</td>
+      <td>-2.1%</td>
+      <td>94%</td>
+      <td>52%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>javelin throw</td>
+      <td>62.12</td>
+      <td>62.12</td>
+      <td>61.70</td>
+      <td>-0.7%</td>
+      <td>61,47</td>
+      <td>-0.65 m</td>
+      <td>-1.1%</td>
+      <td>94%</td>
+      <td>66%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>long jump</td>
+      <td>6.79</td>
+      <td>6.79</td>
+      <td>6.73</td>
+      <td>-0.9%</td>
+      <td>6,75</td>
+      <td>-0.04 m</td>
+      <td>-0.6%</td>
+      <td>94%</td>
+      <td>64%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>marathon</td>
+      <td>2:25:46</td>
+      <td>2:25:49</td>
+      <td>2:26:50</td>
+      <td>-0.7%</td>
+      <td>2:23.42</td>
+      <td>+127.00 sec</td>
+      <td>+1.5%</td>
+      <td>96%</td>
+      <td>45%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>pole vault</td>
+      <td>4.68</td>
+      <td>4.66</td>
+      <td>4.60</td>
+      <td>-1.3%</td>
+      <td>4,58</td>
+      <td>-0.08 m</td>
+      <td>-1.7%</td>
+      <td>97%</td>
+      <td>53%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>shot put</td>
+      <td>19.10</td>
+      <td>18.99</td>
+      <td>18.50</td>
+      <td>-2.6%</td>
+      <td>18,25</td>
+      <td>-0.74 m</td>
+      <td>-4.1%</td>
+      <td>100%</td>
+      <td>42%</td>
+    </tr>
+    <tr>
+      <td>women</td>
+      <td>triple jump</td>
+      <td>14.41</td>
+      <td>14.36</td>
+      <td>14.23</td>
+      <td>-0.9%</td>
+      <td>14,16</td>
+      <td>-0.20 m</td>
+      <td>-1.4%</td>
+      <td>97%</td>
+      <td>51%</td>
+    </tr>
+  </tbody>
+</table>
+
+</div>
+
+
+<!-- ========================================================
+     UITLEG
+========================================================= -->
+
+<div class="note">
+
+<b>94% Top-8 grens:</b>
+performancegrens waarbij minimaal 94% van de historische
+Top-8-observaties wordt meegenomen.
+
+<br>
+
+<b>Voorstel eis LA:</b>
+voorstel op basis van de 94%-baseline en de 1:2-regel.
+
+<br>
+
+<b>Verschil Eis 2024:</b>
+negatief betekent dat het voorstel voor de LA-eis strenger is
+dan de Eis OS 2024; positief betekent dat het voorstel soepeler is.
+
+<br>
+
+<b>Verschil WC2027:</b>
+negatief betekent dat het voorstel voor de LA-eis strenger is
+dan de WC2027-standard; positief betekent dat het voorstel soepeler is.
+
+<br>
+
+<b>Top-8 recall:</b>
+percentage van de historische Top-8-observaties dat aan het
+voorstel voor de LA-eis voldoet.
+
+<br>
+
+<b>FDR:</b>
+aandeel 9&gt;-observaties binnen alle observaties die aan het
+voorstel voor de LA-eis voldoen.
+
+<br>
+
+<b>Sorteren:</b>
+klik op een kolomnaam. Klik opnieuw om de sorteerrichting om te draaien.
+
+</div>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        // ====================================================
+        // ELEMENTEN
+        // ====================================================
+
+        const table =
+            document.getElementById(
+                "criteriaTable"
+            );
+
+
+        if (!table) {
+            return;
+        }
+
+
+        const tbody =
+            table.querySelector(
+                "tbody"
+            );
+
+
+        const headers =
+            Array.from(
+                table.querySelectorAll(
+                    "thead th"
+                )
+            );
+
+
+        const allRows =
+            () =>
+                Array.from(
+                    tbody.querySelectorAll(
+                        "tr"
+                    )
+                );
+
+
+        // ====================================================
+        // KOLOMNAMEN
+        // ====================================================
+
+        const headerNames =
+            headers.map(
+                header =>
+                    header.textContent
+                        .trim()
+                        .toLowerCase()
+            );
+
+
+        function findColumn(names) {
+
+            for (
+                const name
+                of names
+            ) {
+
+                const index =
+                    headerNames.indexOf(
+                        name.toLowerCase()
+                    );
+
+
+                if (
+                    index !== -1
+                ) {
+
+                    return index;
+                }
+
+            }
+
+
+            return -1;
+        }
+
+
+        const genderIndex =
+            findColumn([
+                "Gender"
+            ]);
+
+
+        const disciplineIndex =
+            findColumn([
+                "Discipline"
+            ]);
+
+
+        const wcDiffIndex =
+            findColumn([
+                "Verschil WC2027 (%)"
+            ]);
+
+
+        // ====================================================
+        // FILTERELEMENTEN
+        // ====================================================
+
+        const filterGender =
+            document.getElementById(
+                "filterGender"
+            );
+
+
+        const filterDiscipline =
+            document.getElementById(
+                "filterDiscipline"
+            );
+
+
+        const filterWcDifference =
+            document.getElementById(
+                "filterWcDifference"
+            );
+
+
+        const resetFilters =
+            document.getElementById(
+                "resetFilters"
+            );
+
+
+        const resultCount =
+            document.getElementById(
+                "resultCount"
+            );
+
+
+        // ====================================================
+        // HULPFUNCTIES
+        // ====================================================
+
+        function cellText(
+            row,
+            index
+        ) {
+
+            if (
+                index < 0
+                ||
+                !row.cells[index]
+            ) {
+
+                return "";
+            }
+
+
+            return row
+                .cells[index]
+                .textContent
+                .trim();
+        }
+
+
+        function extractNumber(text) {
+
+            if (
+                text === null
+                ||
+                text === undefined
+            ) {
+
+                return NaN;
+            }
+
+
+            const cleaned =
+                String(text)
+                .trim()
+                .replace(
+                    ",",
+                    "."
+                );
+
+
+            const match =
+                cleaned.match(
+                    /[+-]?[0-9]+(?:\.[0-9]+)?/
+                );
+
+
+            if (!match) {
+                return NaN;
+            }
+
+
+            return parseFloat(
+                match[0]
+            );
+        }
+
+
+        // ====================================================
+        // DROPDOWNS VULLEN
+        // ====================================================
+
+        function uniqueValues(
+            columnIndex
+        ) {
+
+            if (
+                columnIndex < 0
+            ) {
+
+                return [];
+            }
+
+
+            const values =
+                new Set();
+
+
+            allRows().forEach(
+                row => {
+
+                    const value =
+                        cellText(
+                            row,
+                            columnIndex
+                        );
+
+
+                    if (
+                        value !== ""
+                    ) {
+
+                        values.add(
+                            value
+                        );
+                    }
+
+                }
+            );
+
+
+            return Array
+                .from(values)
+                .sort(
+                    (a, b) =>
+                        a.localeCompare(
+                            b,
+                            "nl"
+                        )
+                );
+        }
+
+
+        uniqueValues(
+            genderIndex
+        ).forEach(
+            value => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    value;
+
+                option.textContent =
+                    value;
+
+
+                filterGender.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        uniqueValues(
+            disciplineIndex
+        ).forEach(
+            value => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                option.value =
+                    value;
+
+                option.textContent =
+                    value;
+
+
+                filterDiscipline.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        // ====================================================
+        // FILTEREN
+        // ====================================================
+
+        function applyFilters() {
+
+            const genderValue =
+                filterGender.value;
+
+
+            const disciplineValue =
+                filterDiscipline.value;
+
+
+            const wcMode =
+                filterWcDifference.value;
+
+
+            let visible =
+                0;
+
+
+            allRows().forEach(
+                row => {
+
+                    let show =
+                        true;
+
+
+                    // ----------------------------------------
+                    // Gender
+                    // ----------------------------------------
+
+                    if (
+                        genderValue !== ""
+                        &&
+                        cellText(
+                            row,
+                            genderIndex
+                        ) !== genderValue
+                    ) {
+
+                        show =
+                            false;
+                    }
+
+
+                    // ----------------------------------------
+                    // Discipline
+                    // ----------------------------------------
+
+                    if (
+                        disciplineValue !== ""
+                        &&
+                        cellText(
+                            row,
+                            disciplineIndex
+                        ) !== disciplineValue
+                    ) {
+
+                        show =
+                            false;
+                    }
+
+
+                    // ----------------------------------------
+                    // Verschil WC2027
+                    // ----------------------------------------
+
+                    if (
+                        wcMode !== ""
+                        &&
+                        wcDiffIndex >= 0
+                    ) {
+
+                        const diff =
+                            extractNumber(
+                                cellText(
+                                    row,
+                                    wcDiffIndex
+                                )
+                            );
+
+
+                        if (
+                            isNaN(diff)
+                        ) {
+
+                            show =
+                                false;
+                        }
+
+
+                        else if (
+                            wcMode === "negative"
+                            &&
+                            diff >= 0
+                        ) {
+
+                            show =
+                                false;
+                        }
+
+
+                        else if (
+                            wcMode === "positive"
+                            &&
+                            diff <= 0
+                        ) {
+
+                            show =
+                                false;
+                        }
+
+
+                        else if (
+                            wcMode === "zero"
+                            &&
+                            Math.abs(diff) > 0.000001
+                        ) {
+
+                            show =
+                                false;
+                        }
+
+                    }
+
+
+                    row.style.display =
+                        show
+                            ? ""
+                            : "none";
+
+
+                    if (show) {
+
+                        visible +=
+                            1;
+                    }
+
+                }
+            );
+
+
+            resultCount.textContent =
+                visible
+                + " van "
+                + allRows().length
+                + " rijen zichtbaar";
+        }
+
+
+        // ====================================================
+        // FILTER EVENTS
+        // ====================================================
+
+        filterGender.addEventListener(
+            "change",
+            applyFilters
+        );
+
+
+        filterDiscipline.addEventListener(
+            "change",
+            applyFilters
+        );
+
+
+        filterWcDifference.addEventListener(
+            "change",
+            applyFilters
+        );
+
+
+        // ====================================================
+        // RESET
+        // ====================================================
+
+        resetFilters.addEventListener(
+            "click",
+            function () {
+
+                filterGender.value =
+                    "";
+
+                filterDiscipline.value =
+                    "";
+
+                filterWcDifference.value =
+                    "";
+
+
+                applyFilters();
+
+            }
+        );
+
+
+        // ====================================================
+        // SORTEREN
+        // ====================================================
+
+        let activeSortColumn =
+            -1;
+
+
+        let sortAscending =
+            true;
+
+
+        function parseSortValue(
+            text
+        ) {
+
+            const value =
+                String(text)
+                .trim();
+
+
+            if (
+                value === ""
+            ) {
+
+                return {
+                    empty: true,
+                    numeric: false,
+                    value: ""
+                };
+            }
+
+
+            // -----------------------------------------------
+            // Percentage
+            // -----------------------------------------------
+
+            if (
+                value.includes("%")
+            ) {
+
+                const number =
+                    extractNumber(
+                        value
+                    );
+
+
+                if (
+                    !isNaN(number)
+                ) {
+
+                    return {
+                        empty: false,
+                        numeric: true,
+                        value: number
+                    };
+                }
+
+            }
+
+
+            // -----------------------------------------------
+            // sec / m / pts
+            // -----------------------------------------------
+
+            const unitMatch =
+                value.match(
+                    /^([+-]?[0-9.,]+)\s*(sec|m|pts)$/i
+                );
+
+
+            if (
+                unitMatch
+            ) {
+
+                return {
+                    empty: false,
+                    numeric: true,
+                    value:
+                        parseFloat(
+                            unitMatch[1]
+                            .replace(
+                                ",",
+                                "."
+                            )
+                        )
+                };
+            }
+
+
+            // -----------------------------------------------
+            // Tijd
+            // -----------------------------------------------
+
+            if (
+                value.includes(":")
+            ) {
+
+                const parts =
+                    value.split(":");
+
+
+                const numericParts =
+                    parts.map(
+                        part =>
+                            parseFloat(
+                                part.replace(
+                                    ",",
+                                    "."
+                                )
+                            )
+                    );
+
+
+                if (
+                    numericParts.every(
+                        x =>
+                            !isNaN(x)
+                    )
+                ) {
+
+                    let seconds =
+                        0;
+
+
+                    if (
+                        numericParts.length === 2
+                    ) {
+
+                        seconds =
+                            numericParts[0] * 60
+                            +
+                            numericParts[1];
+                    }
+
+
+                    else if (
+                        numericParts.length === 3
+                    ) {
+
+                        seconds =
+                            numericParts[0] * 3600
+                            +
+                            numericParts[1] * 60
+                            +
+                            numericParts[2];
+                    }
+
+
+                    return {
+                        empty: false,
+                        numeric: true,
+                        value: seconds
+                    };
+                }
+
+            }
+
+
+            // -----------------------------------------------
+            // Normaal getal
+            // -----------------------------------------------
+
+            const normalNumber =
+                value.replace(
+                    ",",
+                    "."
+                );
+
+
+            if (
+                normalNumber !== ""
+                &&
+                !isNaN(normalNumber)
+            ) {
+
+                return {
+                    empty: false,
+                    numeric: true,
+                    value:
+                        parseFloat(
+                            normalNumber
+                        )
+                };
+            }
+
+
+            // -----------------------------------------------
+            // Tekst
+            // -----------------------------------------------
+
+            return {
+                empty: false,
+                numeric: false,
+                value:
+                    value.toLowerCase()
+            };
+        }
+
+
+        headers.forEach(
+            function (
+                header,
+                columnIndex
+            ) {
+
+                header.addEventListener(
+                    "click",
+                    function () {
+
+
+                        if (
+                            activeSortColumn
+                            === columnIndex
+                        ) {
+
+                            sortAscending =
+                                !sortAscending;
+                        }
+
+
+                        else {
+
+                            activeSortColumn =
+                                columnIndex;
+
+                            sortAscending =
+                                true;
+                        }
+
+
+                        // -----------------------------------
+                        // Pijltjes resetten
+                        // -----------------------------------
+
+                        headers.forEach(
+                            h =>
+                                h.classList.remove(
+                                    "sort-asc",
+                                    "sort-desc"
+                                )
+                        );
+
+
+                        header.classList.add(
+                            sortAscending
+                                ? "sort-asc"
+                                : "sort-desc"
+                        );
+
+
+                        // -----------------------------------
+                        // Rijen sorteren
+                        // -----------------------------------
+
+                        const rows =
+                            allRows();
+
+
+                        rows.sort(
+                            function (
+                                rowA,
+                                rowB
+                            ) {
+
+                                const a =
+                                    parseSortValue(
+                                        cellText(
+                                            rowA,
+                                            columnIndex
+                                        )
+                                    );
+
+
+                                const b =
+                                    parseSortValue(
+                                        cellText(
+                                            rowB,
+                                            columnIndex
+                                        )
+                                    );
+
+
+                                // lege waarden onderaan
+
+                                if (
+                                    a.empty
+                                    &&
+                                    !b.empty
+                                ) {
+
+                                    return 1;
+                                }
+
+
+                                if (
+                                    b.empty
+                                    &&
+                                    !a.empty
+                                ) {
+
+                                    return -1;
+                                }
+
+
+                                if (
+                                    a.empty
+                                    &&
+                                    b.empty
+                                ) {
+
+                                    return 0;
+                                }
+
+
+                                let result =
+                                    0;
+
+
+                                if (
+                                    a.numeric
+                                    &&
+                                    b.numeric
+                                ) {
+
+                                    result =
+                                        a.value
+                                        -
+                                        b.value;
+                                }
+
+
+                                else {
+
+                                    result =
+                                        String(
+                                            a.value
+                                        )
+                                        .localeCompare(
+                                            String(
+                                                b.value
+                                            ),
+                                            "nl"
+                                        );
+                                }
+
+
+                                return sortAscending
+                                    ? result
+                                    : -result;
+
+                            }
+                        );
+
+
+                        rows.forEach(
+                            row =>
+                                tbody.appendChild(
+                                    row
+                                )
+                        );
+
+
+                        applyFilters();
+
+                    }
+                );
+
+            }
+        );
+
+
+        // ====================================================
+        // INIT
+        // ====================================================
+
+        applyFilters();
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>
