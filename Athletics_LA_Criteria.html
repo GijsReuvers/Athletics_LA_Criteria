@@ -157,16 +157,13 @@
         const gender =
             genderSelect.value;
 
-
         disciplineSelect.innerHTML =
             "";
-
 
         const disciplines =
             disciplinesByGender[
                 gender
             ] || [];
-
 
         disciplines.forEach(
             function(discipline) {
@@ -199,7 +196,6 @@
         const gender =
             genderSelect.value;
 
-
         const discipline =
             disciplineSelect.value;
 
@@ -209,7 +205,6 @@
             ||
             !discipline
         ) {
-
             return;
         }
 
@@ -221,7 +216,7 @@
 
 
         // ---------------------------------------------------
-        // ALLES EERST UIT
+        // ALLE TRACES EERST UIT
         // ---------------------------------------------------
 
         const visibility =
@@ -270,25 +265,22 @@
         );
 
 
-        // ---------------------------------------------------
-        // ZICHTBAARHEID PER TRACE
-        // ---------------------------------------------------
+        // ===================================================
+        // SNELLE UPDATE
+        //
+        // Voorheen:
+        // één Plotly.restyle() per trace.
+        //
+        // Nu:
+        // alle traces in één keer.
+        // ===================================================
 
-        for (
-            let i = 0;
-            i < plot.data.length;
-            i++
-        ) {
-
-            Plotly.restyle(
-                plot,
-                {
-                    visible:
-                        visibility[i]
-                },
-                [i]
-            );
-        }
+        Plotly.restyle(
+            plot,
+            {
+                visible: visibility
+            }
+        );
 
 
         // ===================================================
@@ -318,6 +310,10 @@
         const labels = [];
 
 
+        // ---------------------------------------------------
+        // 94% TOP-8
+        // ---------------------------------------------------
+
         if (
             thresholds.top8_94 !== null
             &&
@@ -325,7 +321,6 @@
         ) {
 
             labels.push({
-
                 title:
                     "94% Top-8",
 
@@ -335,6 +330,10 @@
         }
 
 
+        // ---------------------------------------------------
+        // 100% TOP-8
+        // ---------------------------------------------------
+
         if (
             thresholds.top8_100 !== null
             &&
@@ -342,7 +341,6 @@
         ) {
 
             labels.push({
-
                 title:
                     "100% Top-8",
 
@@ -352,6 +350,10 @@
         }
 
 
+        // ---------------------------------------------------
+        // 100% TOP-3
+        // ---------------------------------------------------
+
         if (
             thresholds.top3_100 !== null
             &&
@@ -359,7 +361,6 @@
         ) {
 
             labels.push({
-
                 title:
                     "100% Top-3",
 
@@ -369,6 +370,10 @@
         }
 
 
+        // ---------------------------------------------------
+        // VOORSTEL EIS LA
+        // ---------------------------------------------------
+
         if (
             optimum.seconds !== null
             &&
@@ -376,7 +381,6 @@
         ) {
 
             labels.push({
-
                 title:
                     "Voorstel eis LA",
 
@@ -394,6 +398,10 @@
         }
 
 
+        // ---------------------------------------------------
+        // EIS OS 2024
+        // ---------------------------------------------------
+
         if (
             os2024.seconds !== null
             &&
@@ -401,7 +409,6 @@
         ) {
 
             labels.push({
-
                 title:
                     "Eis OS 2024",
 
@@ -411,6 +418,10 @@
         }
 
 
+        // ---------------------------------------------------
+        // WC2027 STANDARD
+        // ---------------------------------------------------
+
         if (
             wc2027.seconds !== null
             &&
@@ -418,7 +429,6 @@
         ) {
 
             labels.push({
-
                 title:
                     "WC2027 standard",
 
@@ -518,13 +528,12 @@
 
 
         // ===================================================
-        // RELAYOUT
+        // TITEL + BLOKKEN IN ÉÉN RELAYOUT
         // ===================================================
 
         Plotly.relayout(
             plot,
             {
-
                 "title.text":
                     discipline
                     + " - "
